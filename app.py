@@ -1,5 +1,5 @@
 import phonenumbers
-from phonenumbers import geocoder, carrier
+from phonenumbers import geocoder, carrier, timezone
 
 
 def lookup_number(number):
@@ -11,17 +11,22 @@ def lookup_number(number):
         )
         location = geocoder.description_for_number(parsed_number, "en")
         carrier_name = carrier.name_for_number(parsed_number, "en")
-        return country_code, formatted_number, location, carrier_name
-    return None, None, None, None
+        time_zones = timezone.time_zones_for_number(parsed_number)
+        return country_code, formatted_number, location, carrier_name, time_zones
+    return None, None, None, None, None
 
 
 if __name__ == "__main__":
     number = input("Enter a phone number: ")
-    country_code, formatted_number, location, carrier_name = lookup_number(number)
+    country_code, formatted_number, location, carrier_name, time_zones = lookup_number(
+        number
+    )
     if country_code and formatted_number:
-        print(f"The number is valid. Country code: {country_code}")
-        print(f"Formatted number: {formatted_number}")
-        print(f"Location: {location}")
-        print(f"Carrier: {carrier_name}")
+        print(
+            f"Number Details:\nCountry code: {country_code}\nFormatted number: {formatted_number}"
+        )
+        print(
+            f"Location: {location}\nCarrier: {carrier_name}\nTime Zones: {', '.join(time_zones)}"
+        )
     else:
         print("The number is not valid.")
